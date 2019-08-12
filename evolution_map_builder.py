@@ -149,8 +149,13 @@ class EvolutionMapBuilder:
             """ calculates relative total area """
 
             for c in contours_under_max_width:
-                _, _, w, h = cv2.boundingRect(c)
-                relative_total_area_em[threshold][w] += w * h  # add area of each component
+                x, y, w, h = cv2.boundingRect(c)
+
+                """ add area of each component by area of component """
+                # relative_total_area_em[threshold][w] += w * h
+
+                """ add area of each component by the number of foreground pixels """
+                relative_total_area_em[threshold][w] += np.sum(img[y:y+h, x: x + w] / 255)
 
         relative_total_area_em /= (img.shape[0] * img.shape[
             1])  # normalize values of relative area by dividing in the image's total area
@@ -161,7 +166,7 @@ class EvolutionMapBuilder:
 
 
 if __name__ == '__main__':
-    img = cv2.imread('txt5.png', cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread('txt4.png', cv2.IMREAD_GRAYSCALE)
 
     relative_total_area_em, components_count_emap = EvolutionMapBuilder.build_em(img)
 
